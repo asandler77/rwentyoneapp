@@ -8,6 +8,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
 
 export const Entry = () => {
@@ -20,8 +21,6 @@ export const Entry = () => {
         question: input,
       });
       console.log('handlePress');
-
-      // Предположим, что сервер возвращает { answer: 'Верно' }
       setAnswer(response.data.answer);
     } catch (error) {
       console.error('Ошибка при запросе:', error);
@@ -34,13 +33,25 @@ export const Entry = () => {
       style={styles.container}
       behavior={Platform.select({ ios: 'padding', android: undefined })}
     >
-      <TextInput
-        style={styles.input}
-        placeholder="Введите вопрос"
-        value={input}
-        onChangeText={setInput}
-      />
+      <View style={styles.inputWrapper}>
+        <TextInput
+          style={styles.input}
+          placeholder="Введите вопрос"
+          value={input}
+          onChangeText={setInput}
+        />
+        {input.length > 0 && (
+          <TouchableOpacity
+            onPress={() => setInput('')}
+            style={styles.clearButton}
+          >
+            <Text style={styles.clearButtonText}>✕</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
       <Button title="Отправить" onPress={handlePress} />
+
       <View style={styles.answerContainer}>
         <Text style={styles.answerText}>{answer}</Text>
       </View>
@@ -54,12 +65,28 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: 'center',
   },
+  inputWrapper: {
+    position: 'relative',
+    justifyContent: 'center',
+  },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 12,
+    paddingRight: 35,
     marginBottom: 10,
     borderRadius: 6,
+  },
+  clearButton: {
+    position: 'absolute',
+    right: 10,
+    top: '50%',
+    transform: [{ translateY: -10 }],
+    padding: 5,
+  },
+  clearButtonText: {
+    fontSize: 16,
+    color: '#888',
   },
   answerContainer: {
     position: 'absolute',
